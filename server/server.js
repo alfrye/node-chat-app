@@ -15,14 +15,22 @@ app.use('/',express.static(publicPath));
 
 io.on('connection', (socket) => {
    console.log('new connection was made');
-    socket.emit('newMessage', {
-      from: 'alan',
-     text: "Hey, What's going on?",
-     created: 234
-    });
+  
+    //socket.emit to a single connections
+   //  socket.emit('newMessage', {
+   //    from: 'alan',
+   //   text: "Hey, What's going on?",
+   //   created: 234
+   //  });
 
     socket.on('createMessage', (msg) => {
        console.log('create new message',msg);
+       // io.emit will emit messages to all conneceted clients
+       io.emit('newMessage', {
+         from: msg.from,
+         text: msg.text,
+         createdAt: new Date().getTime()
+       });
     });
    socket.on('disconnect', () => {
     console.log('Server disconnected');
