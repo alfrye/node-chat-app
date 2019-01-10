@@ -9,23 +9,15 @@ const port = process.env.PORT || 3001;
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
-
+var {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 app.use('/',express.static(publicPath));
 
 io.on('connection', (socket) => {
    console.log('new connection was made');
-    socket.emit('newMessage', {
-       from: 'admin',
-       text: 'Welcome to chat room',
-       createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('admin','Welcome to chat!'));
 
-    socket.broadcast.emit('newMessage', {
-      from: 'admin',
-      text: 'New user joined'
-
-    });
+    socket.broadcast.emit('newMessage', generateMessage('admin', 'New User Joined'));
 
 
     //socket.emit to a single connections
@@ -38,11 +30,7 @@ io.on('connection', (socket) => {
     socket.on('createMessage', (msg) => {
        console.log('create new message',msg);
        // io.emit will emit messages to all conneceted clients
-      //  io.emit('newMessage', {
-      //    from: msg.from,
-      //    text: msg.text,
-      //    createdAt: new Date().getTime()
-      //  });
+       io.emit('newMessage', generateMessage(msg.from,msg.text));
     });
    socket.on('disconnect', () => {
     console.log('Server disconnected');
