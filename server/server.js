@@ -27,10 +27,11 @@ io.on('connection', (socket) => {
    //   created: 234
    //  });
 
-    socket.on('createMessage', (msg) => {
+    socket.on('createMessage', (msg,callback) => {
        console.log('create new message',msg);
        // io.emit will emit messages to all conneceted clients
        io.emit('newMessage', generateMessage(msg.from,msg.text));
+       callback('This is from the server');
     });
    socket.on('disconnect', () => {
     console.log('Server disconnected');
