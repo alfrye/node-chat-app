@@ -5,11 +5,11 @@ const socketIO = require('socket.io');
 const http =  require('http');
 
 
-const port = process.env.PORT || 3001; 
+const port = process.env.PORT || 3000; 
 var app = express();
 var server = http.createServer(app);
 var io = socketIO(server);
-var {generateMessage} = require('./utils/message');
+var {generateMessage , generateLocationMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 app.use('/',express.static(publicPath));
 
@@ -32,6 +32,10 @@ io.on('connection', (socket) => {
        // io.emit will emit messages to all conneceted clients
        io.emit('newMessage', generateMessage(msg.from,msg.text));
        callback('This is from the server');
+    });
+
+    socket.on('createLocationMessage', (coords) => {
+         io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude,coords.longitude));
     });
    socket.on('disconnect', () => {
     console.log('Server disconnected');
